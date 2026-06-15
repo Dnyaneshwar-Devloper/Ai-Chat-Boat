@@ -26,11 +26,15 @@ st.markdown("""
 
 # ---- SIDEBAR SETTINGS ----
 with st.sidebar:
-  ## st.image("ai_emoji.png")
-   st.sidebar.image("ai_emoji.png")
+    st.image("ai_emoji.png")
 
-st.title("⚙️Settings")
-    api_key = st.text_input("Enter GROQ API Key", type="password", placeholder="Enter Key...")
+    st.title("⚙️Settings")
+
+    api_key = st.text_input(
+        "Enter GROQ API Key",
+        type="password",
+        placeholder="Enter Key..."
+    )
     
     st.divider()
     model = st.selectbox("Select Model", ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"])
