@@ -26,7 +26,7 @@ st.markdown("""
 
 # ---- SIDEBAR SETTINGS ----
 with st.sidebar:
-    st.image(r"D:\ChatBot-1\ai emoji.png")
+   st.image("ai_emoji.png")
    
     st.title("⚙️Settings")
     api_key = st.text_input("Enter GROQ API Key", type="password", placeholder="Enter Key...")
