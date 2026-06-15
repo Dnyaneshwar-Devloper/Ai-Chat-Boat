@@ -21,8 +21,7 @@ model = st.sidebar.selectbox( "Select Model", ["llama-3.3-70b-versatile"]
     )
 
     # ---- MEMORY INIT ----
-if "chat_history" not in st.session_state:
-st.session_state.chat_history = ChatMessageHistory()
+if "chat_history" not in st.session_state:st.session_state.chat_history = ChatMessageHistory()
 
     # ---- SYSTEM PROMPT (runs once) ----
 if "initialized" not in st.session_state:
