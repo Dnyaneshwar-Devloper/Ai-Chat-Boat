@@ -30,18 +30,15 @@ SystemMessage(content="You are a helpful AI assistant specialized in Python, Dat
 st.session_state.initialized = True
 
     # ---- CLEAR CHAT ----
-if st.sidebar.button("🗑️ Clear Chat"):
-st.session_state.chat_history = ChatMessageHistory()
+if st.sidebar.button("🗑️ Clear Chat"):st.session_state.chat_history = ChatMessageHistory()
 st.session_state.initialized = False
 st.rerun()
 
     # ---- DISPLAY CHAT ----
-for msg in st.session_state.chat_history.messages:
-if isinstance(msg, HumanMessage):
+for msg in st.session_state.chat_history.messages:if isinstance(msg, HumanMessage):
 with st.chat_message("user"):
 st.markdown(msg.content)
-elif isinstance(msg, AIMessage):
-with st.chat_message("assistant"):
+elif isinstance(msg, AIMessage):with st.chat_message("assistant"):
 st.markdown(msg.content)
 
     # ---- USER INPUT ----
