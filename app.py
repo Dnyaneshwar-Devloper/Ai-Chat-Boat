@@ -35,11 +35,8 @@ st.session_state.initialized = False
 st.rerun()
 
     # ---- DISPLAY CHAT ----
-for msg in st.session_state.chat_history.messages:if isinstance(msg, HumanMessage):
-with st.chat_message("user"):
-st.markdown(msg.content)
-elif isinstance(msg, AIMessage):with st.chat_message("assistant"):
-st.markdown(msg.content)
+for msg in st.session_state.chat_history.messages:if isinstance(msg, HumanMessage):with st.chat_message("user"):st.markdown(msg.content)
+elif isinstance(msg, AIMessage):with st.chat_message("assistant"):st.markdown(msg.content)
 
     # ---- USER INPUT ----
 prompt = st.chat_input("Ask something...")
@@ -66,8 +63,7 @@ temperature=temperature
 MAX_MESSAGES = 10
 history = st.session_state.chat_history.messages[-MAX_MESSAGES:]
 
-with st.chat_message("assistant"):
-with st.spinner("Thinking..."):
+with st.chat_message("assistant"):with st.spinner("Thinking..."):
 response = groq_chat.invoke(history)
 reply = response.content
 st.markdown(reply)
