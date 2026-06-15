@@ -1,75 +1,91 @@
 import os
 import streamlit as st
 from langchain_groq import ChatGroq
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
-    # ---- PAGE CONFIG ----
-st.set_page_config(page_title="Groq Chatbot", page_icon="❄️", layout="centered")
+# ---- PAGE CONFIG ----
+st.set_page_config(page_title=" AI Assistant", page_icon="🐼", layout="wide")
 
-st.title("🐼 Groq AI Chatbot")
-st.caption("The chatbot that actually listens... and remembers. ❄️")
+# ---- CUSTOM CSS ----
+st.markdown("""
+    <style>
+    .main { background-color: #f5f7f9; }
+    .stButton>button { width: 100%; border-radius: 5px; height: 1em; background-color: #ff4b4b; color: white; }
+    .stTextInput>div>div>input { border-radius: 5px; }
+            
+            .sidebar-img {
+        display: block;
+        margin-left: 0;
+        margin-right: auto;
+        width: 100px; /* Adjust size as needed */
+        border-radius: 0px;
+        margin-bottom: 0px;
+            height: 1em;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # ---- SIDEBAR ----
-st.sidebar.header("⚙️ Settings")
+# ---- SIDEBAR SETTINGS ----
+with st.sidebar:
+    st.image(r"D:\ChatBot-1\ai emoji.png")
+   
+    st.title("⚙️Settings")
+    api_key = st.text_input("Enter GROQ API Key", type="password", placeholder="Enter Key...")
+    
+    st.divider()
+    model = st.selectbox("Select Model", ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"])
+    temperature = st.slider("Creativity (Temperature)", 0.0, 1.0, 0.7)
+    
+    uploaded_file = st.file_uploader("📂 Upload context file", type=["txt", "pdf", "md"])
+    if uploaded_file:
+        st.success(f"📄 {uploaded_file.name} ready")
+    
+    if st.button("Clear Chat History"):
+        st.session_state.messages = []
 
-api_key = st.sidebar.text_input("Enter GROQ API Key", type="password")
 
-temperature = st.sidebar.slider("Temperature", 0.0, 1.0, 0.0)
+# ---- CHAT INTERFACE ----
+# Centering the title and caption using a container or direct HTML
+st.markdown("<h1 style='text-align: center;'>🤖 AI Assistant</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>🚀 Meet your new AI sidekick.</p>", unsafe_allow_html=True)
 
-model = st.sidebar.selectbox( "Select Model", ["llama-3.3-70b-versatile"]
-    )
 
-    # ---- MEMORY INIT ----
-if "chat_history" not in st.session_state:st.session_state.chat_history = ChatMessageHistory()
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    # ---- SYSTEM PROMPT (runs once) ----
-if "initialized" not in st.session_state:st.session_state.chat_history.add_message(
-SystemMessage(content="You are a helpful AI assistant specialized in Python, Data Science, and AI.")
-)
-st.session_state.initialized = True
+# Display chat history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    # ---- CLEAR CHAT ----
-if st.sidebar.button("🗑️ Clear Chat"):st.session_state.chat_history = ChatMessageHistory()
-st.session_state.initialized = False
-st.rerun()
+# User Input
+if prompt := st.chat_input("Ask me anything....."):
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-    # ---- DISPLAY CHAT ----
-for msg in st.session_state.chat_history.messages:if isinstance(msg, HumanMessage):with st.chat_message("user"):st.markdown(msg.content)
-elif isinstance(msg, AIMessage):with st.chat_message("assistant"):st.markdown(msg.content)
-
-    # ---- USER INPUT ----
-prompt = st.chat_input("Ask something...")
-
-if prompt:
-if not api_key:
-st.warning("⚠️ Please enter your GROQ API key")
-st.stop()
-
-os.environ["GROQ_API_KEY"] = api_key
-
-        # Add user message
-st.session_state.chat_history.add_user_message(prompt)
-
-with st.chat_message("user"):
-st.markdown(prompt)
-try:
-groq_chat = ChatGroq(
-model=model,
-temperature=temperature
-)
-
-            # 🔥 Limit memory (avoid token overflow)
-MAX_MESSAGES = 10
-history = st.session_state.chat_history.messages[-MAX_MESSAGES:]
-
-with st.chat_message("assistant"):with st.spinner("Thinking..."):
-response = groq_chat.invoke(history)
-reply = response.content
-st.markdown(reply)
-
-            # Add AI response
-st.session_state.chat_history.add_ai_message(reply)
-
-except Exception as e:
-st.error(f"Error: {str(e)}")
+    # Generate Response
+    if not api_key:
+        st.error("Please provide a GROQ API Key in the sidebar.")
+    else:
+        try:
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    os.environ["GROQ_API_KEY"] = api_key
+                    llm = ChatGroq(model=model, temperature=temperature)
+                    
+                    # Include file info if exists
+                    context = f"[File: {uploaded_file.name}] " if uploaded_file else ""
+                    full_query = context + prompt
+                    
+                    response = llm.invoke(full_query)
+                    answer = response.content
+                    st.markdown(answer)
+            
+            # Add assistant message to history
+            st.session_state.messages.append({"role": "assistant", "content": answer})
+            
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
