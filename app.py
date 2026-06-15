@@ -24,8 +24,7 @@ model = st.sidebar.selectbox( "Select Model", ["llama-3.3-70b-versatile"]
 if "chat_history" not in st.session_state:st.session_state.chat_history = ChatMessageHistory()
 
     # ---- SYSTEM PROMPT (runs once) ----
-if "initialized" not in st.session_state:
-st.session_state.chat_history.add_message(
+if "initialized" not in st.session_state:st.session_state.chat_history.add_message(
 SystemMessage(content="You are a helpful AI assistant specialized in Python, Data Science, and AI.")
 )
 st.session_state.initialized = True
