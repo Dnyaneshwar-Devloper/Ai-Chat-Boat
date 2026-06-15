@@ -1,8 +1,8 @@
-    import os
-    import streamlit as st
-    from langchain_groq import ChatGroq
-    from langchain_community.chat_message_histories import ChatMessageHistory
-    from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+import os
+import streamlit as st
+from langchain_groq import ChatGroq
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
     # ---- PAGE CONFIG ----
     st.set_page_config(page_title="Groq Chatbot", page_icon="❄️", layout="centered")
