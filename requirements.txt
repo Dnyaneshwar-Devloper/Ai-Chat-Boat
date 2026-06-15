@@ -1,7 +1,7 @@
-import os
-import streamlit as st
 streamlit
 langchain
 langchain-community
 langchain-core
 langchain-groq
+groq
+python-dotenv
